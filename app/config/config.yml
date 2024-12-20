@@ -1,0 +1,103 @@
+imports:
+    - { resource: parameters.yml }
+    - { resource: './api/parameters.php' }
+    - { resource: security.yml }
+    - { resource: services.yml }
+
+# Put parameters here that don't need to change on each machine where the app is deployed
+# https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
+parameters:
+    locale: en
+    #maximum allowed map points before map clustering uses filtering by geocodes
+    csweb_max_map_points: 6000000
+
+framework:
+    #esi: ~
+    #translator: { fallbacks: ['%locale%'] }
+    secret: '%secret%'
+    router:
+        resource: '%kernel.project_dir%/app/config/routing.yml'
+        strict_requirements: ~
+    form: ~
+    csrf_protection: ~
+    validation: { enable_annotations: true }
+    #serializer: { enable_annotations: true }
+    default_locale: '%locale%'
+    trusted_hosts: ~
+    session:
+        # https://symfony.com/doc/current/reference/configuration/framework.html#handler-id
+        handler_id: session.handler.native_file
+        save_path: '%kernel.project_dir%/var/sessions/%kernel.environment%'
+    fragments: ~
+    http_method_override: true
+    assets: ~
+    php_errors:
+        log: true
+
+# Twig Configuration
+twig:
+    debug: '%kernel.debug%'
+    strict_variables: '%kernel.debug%'
+    globals:
+        csproVersion: '%cspro_version%'
+        maxMapPoints: '%csweb_max_map_points%'
+        apiUrl: '%cspro_rest_api_url%'
+        cache:  false
+
+sensio_framework_extra:
+   router:
+        annotations: false
+doctrine:
+    dbal:
+      default_connection: default
+      connections:
+        default:
+            # url: "mysql://mysuivi:SuiviO!@localhost:3306/pg_csweb"
+            url: "mysql://root:@localhost:3306/denombrement_principale"
+            mapping_types:
+                enum: string
+                bit: boolean
+            #schema_filter: /^pgDashboard_postGres/
+        pgDashboard:
+            driver: 'pdo_pgsql'
+            charset: UTF8
+            # host: 193.203.15.94
+            host: localhost
+            port: 5433
+            server_version: '15'
+            dbname: dbPgres_pigore
+            user: pl_gn
+            password: damaro@123
+
+            mapping_types:
+                enum: string   
+                bit: boolean              
+        
+      
+        # IMPORTANT: You MUST configure your server version,
+        # either here or in the DATABASE_URL env var (see .env file)
+        #server_version: '13'
+    orm:
+        default_entity_manager: default
+        entity_managers:
+            default:
+                naming_strategy: doctrine.orm.naming_strategy.underscore
+                connection: default
+                mappings:
+                    App:
+                        type: annotation
+                        dir: '%kernel.project_dir%/src/AppBundle/Entity/'
+                        prefix: App
+
+            pgDashboard:
+                naming_strategy: doctrine.orm.naming_strategy.underscore
+                connection: pgDashboard
+                mappings:
+                    App:
+                        type: annotation
+                        dir: '%kernel.project_dir%/src/AppBundle/Entity/pgDashboard/'
+                        prefix: AppBundle/Entity/pgDashboard/
+                          
+        auto_generate_proxy_classes: true
+        proxy_dir: '%kernel.cache_dir%/doctrine/orm/Proxies'
+        proxy_namespace: Proxies
