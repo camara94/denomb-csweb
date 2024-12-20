@@ -1,0 +1,18 @@
+<?php
+namespace AppBundle\Service;
+
+use Aura\Sql\ExtendedPdo;
+
+class PdoSQLSERVERHelper extends ExtendedPdo {
+
+    private $entity;
+
+     public function __construct(
+         \Doctrine\ORM\EntityManagerInterface $pgDashboardEntityManager = NULL
+     )
+     {
+        $this->entity = $pgDashboardEntityManager->getConnection();
+         $dsn = 'pdo_pgsql:host=' . $this->entity->getHost() . ';dbname=' . $this->entity->getDatabase() . ';charset=UTF-8';
+         parent::__construct($dsn,$this->entity->getUsername(),$this->entity->getPassword());
+     }
+}
