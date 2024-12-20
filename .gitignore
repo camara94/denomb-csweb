@@ -1,0 +1,5 @@
+files/*
+var/*
+src/AppBundle/config.php
+vendor/
+composer.lock
